@@ -1,0 +1,12 @@
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+
+# --- コミットメッセージの書き方 ---
+# type: feat (新機能), fix (バグ修正), docs (ドキュメントのみ), style (書式のみ), refactor (リファクタリング), perf (パフォーマンス改善), test (テスト), chore (ビルドプロセスやツールの変更)
+# scope: 変更範囲（例: app, home, component 等）
+# subject: 変更の要約（日本語でOK）
+# body: 変更の理由や背景（詳細が必要な場合）
+# footer: 破壊的変更(BREAKING CHANGE)やissue番号
