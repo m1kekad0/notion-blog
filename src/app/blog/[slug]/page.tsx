@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
-import Giscus from "@giscus/react";
+import Comments from "@/components/Comments";
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -51,27 +51,6 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <h3 className="text-xl font-bold mb-4">Comments</h3>
                 <Comments />
             </div>
-        </div>
-    );
-}
-
-function Comments() {
-    return (
-        <div className="giscus-wrapper">
-            <Giscus
-                id="comments"
-                repo={process.env.NEXT_PUBLIC_GISCUS_REPO as any}
-                repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID as any}
-                category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY as any}
-                categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID as any}
-                mapping="pathname"
-                reactionsEnabled="1"
-                emitMetadata="0"
-                inputPosition="top"
-                theme="preferred_color_scheme"
-                lang="ja"
-                loading="lazy"
-            />
         </div>
     );
 }
