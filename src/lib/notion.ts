@@ -49,25 +49,18 @@ export async function getPosts(): Promise<Post[]> {
             const pid = item.parent.database_id;
             const isDatabaseMatch = pid && pid.replaceAll("-", "") === databaseId.replaceAll("-", "");
 
-            // Status filtering: Only show 'Published' posts if the property exists
             const status = item.properties.status?.select?.name;
-            // If status property exists, check if it is 'Published'. If not exists, strict to false or true? 
-            // Log showed status property exists and value is "Published".
-            // Let's be safe: if status exists, must be Published. If not, include it (or exclude? usually exclude drafts).
-            // Given the log showed status: "Published", we should filter.
             const isPublished = status ? status === "Published" : true;
 
             return isDatabaseMatch && isPublished;
         });
 
         const posts = dbItems.map((page: any) => {
-            // Property mapping based on actual DB structure (inspected via API)
             const title = page.properties.title?.title?.[0]?.plain_text ||
                 "Untitled";
 
             const slug = page.properties.slug?.rich_text?.[0]?.plain_text || page.id;
 
-            // Use createdAt property if available, otherwise created_time
             const date = page.properties.createdAt?.created_time ||
                 page.created_time;
 
@@ -97,7 +90,23 @@ export async function getPosts(): Promise<Post[]> {
  */
 export async function getPostBySlug(slug: string): Promise<any> {
     const posts = await getPosts();
+    console.log(`Searching for slug: "${slug}"`);
+    console.log("Available slugs:", posts.map(p => `"${p.slug}"`));
+
     const post = posts.find((p) => p.slug === slug);
+
+    if (!post) {
+        console.log("❌ Post not found via strict match.");
+        // Fallback: try decoded slug?
+        const decoded = decodeURIComponent(slug);
+        if (decoded !== slug) {
+            console.log(`Trying decoded slug: "${decoded}"`);
+            const postDecoded = posts.find((p) => p.slug === decoded);
+            if (postDecoded) return postDecoded;
+        }
+    } else {
+        console.log(`✅ Found post: ${post.id}`);
+    }
     return post;
 }
 
