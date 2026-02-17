@@ -5,11 +5,19 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Giscus from "@giscus/react";
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-    const post = await getPostBySlug(params.slug);
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const post = await getPostBySlug(slug);
 
     if (!post) {
-        return <div>Post not found</div>;
+        return (
+            <div className="container mx-auto px-4 py-12 text-center">
+                <h1 className="text-2xl font-bold mb-4">Post not found</h1>
+                <p className="text-gray-500">
+                    Could not find a post with slug: <code className="bg-gray-100 p-1 rounded">{slug}</code>
+                </p>
+            </div>
+        );
     }
 
     const content = await getPostContent(post.id);
