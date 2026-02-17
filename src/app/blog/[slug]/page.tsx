@@ -54,15 +54,15 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                                         rel="noopener noreferrer"
                                         className="block p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors my-4 not-prose"
                                     >
-                                        <div className="flex items-center gap-2">
+                                        <span className="flex items-center gap-2">
                                             <span className="text-blue-500">🔗</span>
                                             <span className="font-medium truncate underline text-blue-600 dark:text-blue-400">
                                                 {href}
                                             </span>
-                                        </div>
-                                        <div className="text-xs text-gray-400 mt-1 truncate">
+                                        </span>
+                                        <span className="block text-xs text-gray-400 mt-1 truncate">
                                             Bookmark
-                                        </div>
+                                        </span>
                                     </a>
                                 );
                             }
