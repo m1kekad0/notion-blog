@@ -91,13 +91,11 @@ export async function getPosts(): Promise<Post[]> {
 export async function getPostBySlug(slug: string): Promise<any> {
     const posts = await getPosts();
     console.log(`Searching for slug: "${slug}"`);
-    console.log("Available slugs:", posts.map(p => `"${p.slug}"`));
 
     const post = posts.find((p) => p.slug === slug);
 
     if (!post) {
         console.log("❌ Post not found via strict match.");
-        // Fallback: try decoded slug?
         const decoded = decodeURIComponent(slug);
         if (decoded !== slug) {
             console.log(`Trying decoded slug: "${decoded}"`);
@@ -116,5 +114,8 @@ export async function getPostBySlug(slug: string): Promise<any> {
 export async function getPostContent(pageId: string) {
     const mdblocks = await n2m.pageToMarkdown(pageId);
     const mdString = n2m.toMarkdownString(mdblocks);
+    console.log("--- Generated Markdown ---");
+    console.log(JSON.stringify(mdString.parent)); // Log as JSON to better see newlines
+    console.log("--------------------------");
     return mdString.parent;
 }
