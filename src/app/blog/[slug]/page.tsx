@@ -5,6 +5,7 @@ import remarkBreaks from "remark-breaks";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Comments from "@/components/Comments";
+import Link from "next/link";
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -43,6 +44,35 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
+                    components={{
+                        a: ({ node, href, children, ...props }) => {
+                            if (children === "bookmark" && href) {
+                                return (
+                                    <a
+                                        href={href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors my-4 not-prose"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-blue-500">🔗</span>
+                                            <span className="font-medium truncate underline text-blue-600 dark:text-blue-400">
+                                                {href}
+                                            </span>
+                                        </div>
+                                        <div className="text-xs text-gray-400 mt-1 truncate">
+                                            Bookmark
+                                        </div>
+                                    </a>
+                                );
+                            }
+                            return (
+                                <a href={href} className="text-blue-600 hover:underline" {...props}>
+                                    {children}
+                                </a>
+                            );
+                        }
+                    }}
                 >
                     {content}
                 </ReactMarkdown>
