@@ -26,6 +26,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-3xl">
+            <div className="mb-8">
+                <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                    ← Back to Home
+                </Link>
+            </div>
+
             <header className="mb-8">
                 <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
                 <div className="flex items-center gap-4 text-gray-500 text-sm">

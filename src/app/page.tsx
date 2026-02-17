@@ -16,7 +16,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-12 max-w-3xl">
       <header className="mb-12 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
           Notion Blog
@@ -26,36 +26,33 @@ export default async function Home() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="space-y-8">
         {posts.map((post) => (
-          <Link href={`/blog/${post.slug}`} key={post.id} className="group block">
-            <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-card h-full flex flex-col">
-              {/* Image Placeholder (Add actual cover image support later) */}
-              <div className="h-48 bg-gray-200 dark:bg-gray-800 w-full object-cover"></div>
-
-              <div className="p-6 flex-1 flex flex-col">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                    {post.tags[0] || "Blog"}
+          <Link href={`/blog/${post.slug}`} key={post.id} className="block group">
+            <article className="border-b pb-8 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
+              <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                <time dateTime={post.date}>
+                  {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
+                </time>
+                {post.tags.map(tag => (
+                  <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs">
+                    {tag}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
-                  </span>
-                </div>
-
-                <h2 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {post.title}
-                </h2>
-
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4 flex-1">
-                  {post.excerpt || "No excerpt available."}
-                </p>
-
-                <div className="text-blue-500 text-sm font-medium group-hover:underline mt-auto">
-                  Read more →
-                </div>
+                ))}
               </div>
-            </div>
+
+              <h2 className="text-2xl font-bold mb-3 group-hover:text-blue-600 transition-colors">
+                {post.title}
+              </h2>
+
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4 line-clamp-3">
+                {post.excerpt || "No excerpt available."}
+              </p>
+
+              <div className="text-blue-500 text-sm font-medium group-hover:underline">
+                Read more →
+              </div>
+            </article>
           </Link>
         ))}
       </div>
