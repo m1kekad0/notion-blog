@@ -1,0 +1,69 @@
+import { getPostBySlug, getPostContent } from "@/lib/notion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
+import Giscus from "@giscus/react";
+
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+    const post = await getPostBySlug(params.slug);
+
+    if (!post) {
+        return <div>Post not found</div>;
+    }
+
+    const content = await getPostContent(post.id);
+
+    return (
+        <div className="container mx-auto px-4 py-12 max-w-3xl">
+            <header className="mb-8">
+                <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+                <div className="flex items-center gap-4 text-gray-500 text-sm">
+                    <span>{post.date}</span>
+                    <div className="flex gap-2">
+                        {post.tags.map((tag: string) => (
+                            <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </header>
+
+            <article className="prose dark:prose-invert max-w-none prose-img:rounded-lg">
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                >
+                    {content}
+                </ReactMarkdown>
+            </article>
+
+            <div className="mt-16 pt-8 border-t">
+                <h3 className="text-xl font-bold mb-4">Comments</h3>
+                <Comments />
+            </div>
+        </div>
+    );
+}
+
+function Comments() {
+    return (
+        <div className="giscus-wrapper">
+            <Giscus
+                id="comments"
+                repo={process.env.NEXT_PUBLIC_GISCUS_REPO as any}
+                repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID as any}
+                category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY as any}
+                categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID as any}
+                mapping="pathname"
+                reactionsEnabled="1"
+                emitMetadata="0"
+                inputPosition="top"
+                theme="preferred_color_scheme"
+                lang="ja"
+                loading="lazy"
+            />
+        </div>
+    );
+}
