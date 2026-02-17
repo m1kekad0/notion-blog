@@ -78,6 +78,13 @@ export async function getPosts(): Promise<Post[]> {
             };
         });
 
+        // Sort by date descending
+        posts.sort((a: any, b: any) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA;
+        });
+
         return posts;
     } catch (error) {
         console.error("Failed to fetch posts:", error);
