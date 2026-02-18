@@ -30,8 +30,13 @@ export default function RootLayout({
           <div className="min-h-screen flex flex-col bg-background text-foreground">
             <header className="border-b dark:border-gray-800 sticky top-0 bg-background/80 backdrop-blur-md z-10 transition-colors duration-300">
               <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-3xl">
-                <div className="font-bold text-lg hover:text-blue-500 transition-colors">
-                  <a href="/">Notion Blog</a>
+                <div className="flex items-center gap-4">
+                  <div className="font-bold text-lg hover:text-blue-500 transition-colors">
+                    <a href="/">Notion Blog</a>
+                  </div>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline-block leading-tight max-w-[300px]">
+                    ブログの内容は事実に基づいてGeminiが生成した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
+                  </span>
                 </div>
                 <ThemeToggle />
               </div>
