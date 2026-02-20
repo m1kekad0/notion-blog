@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/notion";
 
+export const revalidate = 3600; // 1 hour
+
+
 export default async function Home() {
   const posts = await getPosts();
 
