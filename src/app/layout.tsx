@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Notion Blog",
+  title: "引きこもりエンジニアの徒然ログ",
   description: "A blog powered by Notion and Next.js",
 };
 
@@ -32,7 +32,7 @@ export default function RootLayout({
               <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-3xl">
                 <div className="flex items-center gap-4">
                   <div className="font-bold text-lg hover:text-blue-500 transition-colors">
-                    <a href="/">Notion Blog</a>
+                    <a href="/">引きこもりエンジニアの徒然ログ</a>
                   </div>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline-block leading-tight max-w-[300px]">
                     ブログの内容は事実に基づいてGeminiが生成した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
@@ -45,7 +45,7 @@ export default function RootLayout({
               {children}
             </main>
             <footer className="py-8 text-center text-sm text-gray-500 dark:text-gray-400 border-t dark:border-gray-800 mt-auto transition-colors duration-300">
-              © {new Date().getFullYear()} Notion Blog. All rights reserved.
+              © {new Date().getFullYear()} 引きこもりエンジニアの徒然ログ. All rights reserved.
             </footer>
           </div>
         </ThemeProvider>

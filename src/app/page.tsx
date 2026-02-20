@@ -22,10 +22,10 @@ export default async function Home() {
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <header className="mb-12 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-          Notion Blog
+          引きこもりエンジニアの徒然ログ
         </h1>
         <p className="text-xl text-gray-500">
-          Powered by Next.js & Notion API
+          在宅エンジニアとして仕事はしています
         </p>
       </header>
 
