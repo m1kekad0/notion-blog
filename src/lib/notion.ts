@@ -24,6 +24,7 @@ export type Post = {
     date: string;
     tags: string[];
     excerpt: string;
+    views: number;
 };
 
 /**
@@ -68,6 +69,8 @@ export async function getPosts(): Promise<Post[]> {
 
             const excerpt = page.properties.summary?.rich_text?.[0]?.plain_text || "";
 
+            const views = page.properties.views?.number || 0;
+
             return {
                 id: page.id,
                 title,
@@ -75,6 +78,7 @@ export async function getPosts(): Promise<Post[]> {
                 date,
                 tags,
                 excerpt,
+                views,
             };
         });
 
@@ -125,4 +129,23 @@ export async function getPostContent(pageId: string) {
     console.log(JSON.stringify(mdString.parent)); // Log as JSON to better see newlines
     console.log("--------------------------");
     return mdString.parent;
+}
+
+/**
+ * Increment views for a post
+ */
+export async function incrementViews(pageId: string, currentViews: number) {
+    try {
+        await notion.pages.update({
+            page_id: pageId,
+            properties: {
+                views: {
+                    number: currentViews + 1,
+                },
+            },
+        });
+        console.log(`✅ Incremented views for ${pageId}: ${currentViews} -> ${currentViews + 1}`);
+    } catch (error) {
+        console.error("Failed to increment views:", error);
+    }
 }

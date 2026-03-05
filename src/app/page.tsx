@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/notion";
+import { Eye } from "lucide-react";
 
 export const revalidate = 3600; // 1 hour
 
@@ -37,6 +38,10 @@ export default async function Home() {
                 <time dateTime={post.date}>
                   {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
                 </time>
+                <div className="flex items-center gap-1">
+                  <Eye size={14} />
+                  <span>{post.views} views</span>
+                </div>
                 {post.tags.map(tag => (
                   <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs">
                     {tag}

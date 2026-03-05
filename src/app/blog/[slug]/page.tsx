@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostContent } from "@/lib/notion";
+import { getPostBySlug, getPostContent, incrementViews } from "@/lib/notion";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,6 +7,7 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Comments from "@/components/Comments";
 import Link from "next/link";
+import { Eye } from "lucide-react";
 
 export const revalidate = 3600; // 1 hour
 
@@ -18,6 +19,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     if (!post) {
         notFound();
     }
+
+    // バックグラウンドで閲覧数を更新
+    // Server Component 内で実行されるため、レンダリング時に一度だけ実行される
+    // (ビルド時の静的生成や再検証時にも実行される点に注意)
+    await incrementViews(post.id, post.views);
 
     const content = await getPostContent(post.id);
 
@@ -33,6 +39,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
                 <div className="flex items-center gap-4 text-gray-500 text-sm">
                     <span>{post.date}</span>
+                    <div className="flex items-center gap-1">
+                        <Eye size={16} />
+                        <span>{post.views + 1} views</span>
+                    </div>
                     <div className="flex gap-2">
                         {post.tags.map((tag: string) => (
                             <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
