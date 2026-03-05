@@ -2,19 +2,29 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Using Node.js locally
+
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Using Docker (pnpm)
+
+Docker を利用してコンテナ内で開発することも可能です。
+
+```bash
+# コンテナのビルドと起動
+docker compose up -d
+
+# 依存関係のインストール
+docker compose run --rm app pnpm install
+```
+
+詳細は [Docker 開発ガイド](.gemini/antigravity/brain/beec94dc-3e4b-4052-bcd0-243059cf484f/docker_guide.md) を参照してください。
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
