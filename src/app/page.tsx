@@ -39,7 +39,7 @@ export default async function Home({
           引きこもりエンジニアの徒然ログ
         </h1>
         <p className="text-xl text-gray-500">
-          在宅エンジニアとして仕事はしています
+          完全フルリモート開発故に引きこもり
         </p>
       </header>
 

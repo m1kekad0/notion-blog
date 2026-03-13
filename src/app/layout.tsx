@@ -60,7 +60,7 @@ export default function RootLayout({
                     <a href="/">引きこもりエンジニアの徒然ログ</a>
                   </div>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline-block leading-tight max-w-[300px]">
-                    ブログの内容は事実に基づいてGeminiが生成した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
+                    ブログの内容は事実に基づいて生成AIが出力した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
                   </span>
                 </div>
                 <ThemeToggle />
