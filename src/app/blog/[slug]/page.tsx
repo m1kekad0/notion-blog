@@ -8,6 +8,7 @@ import "highlight.js/styles/github-dark.css";
 import Comments from "@/components/Comments";
 import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
+import Image from "next/image";
 import { Eye } from "lucide-react";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
@@ -88,6 +89,23 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
+                        img: ({ src, alt }) => {
+                            const imgSrc = typeof src === "string" ? src : "";
+                            if (!imgSrc) return null;
+                            return (
+                                <span className="block my-4">
+                                    <Image
+                                        src={imgSrc}
+                                        alt={alt || ""}
+                                        width={0}
+                                        height={0}
+                                        sizes="100vw"
+                                        style={{ width: "100%", height: "auto" }}
+                                        className="rounded-lg"
+                                    />
+                                </span>
+                            );
+                        },
                         a: ({ node, href, children, ...props }) => {
                             if (children === "bookmark" && href) {
                                 return (
