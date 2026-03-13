@@ -12,6 +12,8 @@ import Image from "next/image";
 import { Eye } from "lucide-react";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
+import TableOfContents from "@/components/TableOfContents";
+import { extractHeadings } from "@/lib/toc";
 
 export const revalidate = 3600; // 1 hour
 
@@ -57,9 +59,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     }
 
     const content = await getPostContent(post.id);
+    const headings = extractHeadings(content);
 
     return (
-        <div className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="container mx-auto px-4 py-12 max-w-3xl xl:max-w-5xl">
             <ViewTracker pageId={post.id} />
 
             <div className="mb-8">
@@ -68,27 +71,47 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 </Link>
             </div>
 
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-                <div className="flex items-center gap-4 text-gray-500 text-sm">
-                    <span>{post.date}</span>
-                    <div className="flex items-center gap-1">
-                        <Eye size={16} />
-                        <span>{post.views} views</span>
-                    </div>
-                    <div className="flex gap-2">
-                        {post.tags.map((tag: string) => (
-                            <TagLink key={tag} tag={tag} />
-                        ))}
-                    </div>
-                </div>
-            </header>
+            <div className="xl:flex xl:gap-12">
+                {/* Main content */}
+                <div className="flex-1 min-w-0">
+                    <header className="mb-8">
+                        <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+                        <div className="flex items-center gap-4 text-gray-500 text-sm">
+                            <span>{post.date}</span>
+                            <div className="flex items-center gap-1">
+                                <Eye size={16} />
+                                <span>{post.views} views</span>
+                            </div>
+                            <div className="flex gap-2 flex-wrap">
+                                {post.tags.map((tag: string) => (
+                                    <TagLink key={tag} tag={tag} />
+                                ))}
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* TOC inline (non-xl screens) */}
+                    {headings.length > 0 && (
+                        <div className="xl:hidden mb-8 p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
+                            <TableOfContents headings={headings} />
+                        </div>
+                    )}
 
             <article className="prose dark:prose-invert max-w-none prose-img:rounded-lg">
                 <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
+                        h2: ({ children }) => {
+                            const text = String(children).replace(/\*+/g, "").trim();
+                            const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");
+                            return <h2 id={id}>{children}</h2>;
+                        },
+                        h3: ({ children }) => {
+                            const text = String(children).replace(/\*+/g, "").trim();
+                            const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");
+                            return <h3 id={id}>{children}</h3>;
+                        },
                         img: ({ src, alt }) => {
                             const imgSrc = typeof src === "string" ? src : "";
                             if (!imgSrc) return null;
@@ -139,9 +162,20 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 </ReactMarkdown>
             </article>
 
-            <div className="mt-16 pt-8 border-t">
-                <h3 className="text-xl font-bold mb-4">Comments</h3>
-                <Comments />
+                    <div className="mt-16 pt-8 border-t">
+                        <h3 className="text-xl font-bold mb-4">Comments</h3>
+                        <Comments />
+                    </div>
+                </div>
+
+                {/* TOC sidebar (xl screens) */}
+                {headings.length > 0 && (
+                    <aside className="hidden xl:block w-56 shrink-0">
+                        <div className="sticky top-24 p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
+                            <TableOfContents headings={headings} />
+                        </div>
+                    </aside>
+                )}
             </div>
         </div>
     );
