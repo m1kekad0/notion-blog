@@ -5,11 +5,19 @@ import TagLink from "@/components/TagLink";
 
 export const revalidate = 3600; // 1 hour
 
+const PAGE_SIZE = 10;
 
-export default async function Home() {
-  const posts = await getPosts();
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const currentPage = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
 
-  if (posts.length === 0) {
+  const allPosts = await getPosts();
+
+  if (allPosts.length === 0) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-24">
         <h1 className="text-2xl font-bold mb-4">No posts found</h1>
@@ -19,6 +27,10 @@ export default async function Home() {
       </div>
     );
   }
+
+  const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
+  const safePage = Math.min(currentPage, totalPages);
+  const posts = allPosts.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
@@ -63,6 +75,42 @@ export default async function Home() {
           </article>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <nav className="flex justify-center items-center gap-2 mt-12" aria-label="ページネーション">
+          {safePage > 1 && (
+            <Link
+              href={safePage === 2 ? "/" : `/?page=${safePage - 1}`}
+              className="px-4 py-2 rounded border hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
+            >
+              ← 前へ
+            </Link>
+          )}
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <Link
+              key={p}
+              href={p === 1 ? "/" : `/?page=${p}`}
+              className={`px-4 py-2 rounded border text-sm transition-colors ${
+                p === safePage
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-800"
+              }`}
+            >
+              {p}
+            </Link>
+          ))}
+
+          {safePage < totalPages && (
+            <Link
+              href={`/?page=${safePage + 1}`}
+              className="px-4 py-2 rounded border hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
+            >
+              次へ →
+            </Link>
+          )}
+        </nav>
+      )}
     </div>
   );
 }
