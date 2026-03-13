@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostContent, incrementViews } from "@/lib/notion";
+import { getPostBySlug, getPostContent, getPosts } from "@/lib/notion";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -6,11 +6,16 @@ import remarkBreaks from "remark-breaks";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Comments from "@/components/Comments";
+import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 
 export const revalidate = 3600; // 1 hour
 
+export async function generateStaticParams() {
+    const posts = await getPosts();
+    return posts.map((post) => ({ slug: post.slug }));
+}
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -20,15 +25,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         notFound();
     }
 
-    // バックグラウンドで閲覧数を更新
-    // Server Component 内で実行されるため、レンダリング時に一度だけ実行される
-    // (ビルド時の静的生成や再検証時にも実行される点に注意)
-    await incrementViews(post.id, post.views);
-
     const content = await getPostContent(post.id);
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-3xl">
+            <ViewTracker pageId={post.id} />
+
             <div className="mb-8">
                 <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
                     ← Back to Home
@@ -41,7 +43,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     <span>{post.date}</span>
                     <div className="flex items-center gap-1">
                         <Eye size={16} />
-                        <span>{post.views + 1} views</span>
+                        <span>{post.views} views</span>
                     </div>
                     <div className="flex gap-2">
                         {post.tags.map((tag: string) => (

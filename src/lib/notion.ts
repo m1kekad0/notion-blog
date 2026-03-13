@@ -132,6 +132,14 @@ export async function getPostContent(pageId: string) {
 }
 
 /**
+ * Get a single post by pageId
+ */
+export async function getPostById(pageId: string): Promise<Post | undefined> {
+    const posts = await getPosts();
+    return posts.find((p) => p.id === pageId);
+}
+
+/**
  * Increment views for a post
  */
 export async function incrementViews(pageId: string, currentViews: number) {
