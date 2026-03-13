@@ -29,6 +29,11 @@ export const metadata: Metadata = {
     title: siteName,
     description: siteDescription,
   },
+  alternates: {
+    types: {
+      "application/rss+xml": `${siteUrl}/feed.xml`,
+    },
+  },
 };
 
 export default function RootLayout({
