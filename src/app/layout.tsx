@@ -6,9 +6,34 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://localhost:3000";
+const siteName = "引きこもりエンジニアの徒然ログ";
+const siteDescription = "引きこもりエンジニアの日常・技術・雑記ブログ。Notion と Next.js で動いています。";
+
 export const metadata: Metadata = {
-  title: "引きこもりエンジニアの徒然ログ",
-  description: "A blog powered by Notion and Next.js",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteName,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    siteName,
+    title: siteName,
+    description: siteDescription,
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary",
+    title: siteName,
+    description: siteDescription,
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": `${siteUrl}/feed.xml`,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -35,7 +60,7 @@ export default function RootLayout({
                     <a href="/">引きこもりエンジニアの徒然ログ</a>
                   </div>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline-block leading-tight max-w-[300px]">
-                    ブログの内容は事実に基づいてGeminiが生成した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
+                    ブログの内容は事実に基づいて生成AIが出力した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
                   </span>
                 </div>
                 <ThemeToggle />
