@@ -9,12 +9,41 @@ import Comments from "@/components/Comments";
 import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
 import { Eye } from "lucide-react";
+import type { Metadata } from "next";
 
 export const revalidate = 3600; // 1 hour
 
 export async function generateStaticParams() {
     const posts = await getPosts();
     return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const post = await getPostBySlug(slug);
+
+    if (!post) {
+        return { title: "Not Found" };
+    }
+
+    const description = post.excerpt || undefined;
+
+    return {
+        title: post.title,
+        description,
+        openGraph: {
+            type: "article",
+            title: post.title,
+            description,
+            publishedTime: post.date,
+            tags: post.tags,
+        },
+        twitter: {
+            card: "summary",
+            title: post.title,
+            description,
+        },
+    };
 }
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
