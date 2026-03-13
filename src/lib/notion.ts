@@ -46,9 +46,10 @@ export async function getPosts(): Promise<Post[]> {
             },
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const dbItems = response.results.filter((item: any) => {
             const pid = item.parent.database_id;
-            const isDatabaseMatch = pid && pid.replaceAll("-", "") === databaseId.replaceAll("-", "");
+            const isDatabaseMatch = pid && pid.replaceAll("-", "") === databaseId!.replaceAll("-", "");
 
             const status = item.properties.status?.select?.name;
             const isPublished = status ? status === "Published" : true;
@@ -56,38 +57,32 @@ export async function getPosts(): Promise<Post[]> {
             return isDatabaseMatch && isPublished;
         });
 
-        const posts = dbItems.map((page: any) => {
-            const title = page.properties.title?.title?.[0]?.plain_text ||
-                "Untitled";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const posts: Post[] = dbItems.map((page: any) => {
+            const title: string =
+                page.properties.title?.title?.[0]?.plain_text ?? "Untitled";
 
-            const slug = page.properties.slug?.rich_text?.[0]?.plain_text || page.id;
+            const slug: string =
+                page.properties.slug?.rich_text?.[0]?.plain_text ?? page.id;
 
-            const date = page.properties.createdAt?.created_time ||
-                page.created_time;
+            const date: string =
+                page.properties.createdAt?.created_time ?? page.created_time;
 
-            const tags = page.properties.tags?.multi_select?.map((tag: any) => tag.name) || [];
+            const tags: string[] =
+                page.properties.tags?.multi_select?.map(
+                    (tag: { name: string }) => tag.name
+                ) ?? [];
 
-            const excerpt = page.properties.summary?.rich_text?.[0]?.plain_text || "";
+            const excerpt: string =
+                page.properties.summary?.rich_text?.[0]?.plain_text ?? "";
 
-            const views = page.properties.views?.number || 0;
+            const views: number = page.properties.views?.number ?? 0;
 
-            return {
-                id: page.id,
-                title,
-                slug,
-                date,
-                tags,
-                excerpt,
-                views,
-            };
+            return { id: page.id, title, slug, date, tags, excerpt, views };
         });
 
         // Sort by date descending
-        posts.sort((a: any, b: any) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            return dateB - dateA;
-        });
+        posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         return posts;
     } catch (error) {
@@ -99,35 +94,26 @@ export async function getPosts(): Promise<Post[]> {
 /**
  * Get a single post by slug
  */
-export async function getPostBySlug(slug: string): Promise<any> {
+export async function getPostBySlug(slug: string): Promise<Post | undefined> {
     const posts = await getPosts();
-    console.log(`Searching for slug: "${slug}"`);
-
     const post = posts.find((p) => p.slug === slug);
 
     if (!post) {
-        console.log("❌ Post not found via strict match.");
         const decoded = decodeURIComponent(slug);
         if (decoded !== slug) {
-            console.log(`Trying decoded slug: "${decoded}"`);
-            const postDecoded = posts.find((p) => p.slug === decoded);
-            if (postDecoded) return postDecoded;
+            return posts.find((p) => p.slug === decoded);
         }
-    } else {
-        console.log(`✅ Found post: ${post.id}`);
     }
+
     return post;
 }
 
 /**
  * Get post content (markdown)
  */
-export async function getPostContent(pageId: string) {
+export async function getPostContent(pageId: string): Promise<string> {
     const mdblocks = await n2m.pageToMarkdown(pageId);
     const mdString = n2m.toMarkdownString(mdblocks);
-    console.log("--- Generated Markdown ---");
-    console.log(JSON.stringify(mdString.parent)); // Log as JSON to better see newlines
-    console.log("--------------------------");
     return mdString.parent;
 }
 
@@ -142,7 +128,7 @@ export async function getPostById(pageId: string): Promise<Post | undefined> {
 /**
  * Increment views for a post
  */
-export async function incrementViews(pageId: string, currentViews: number) {
+export async function incrementViews(pageId: string, currentViews: number): Promise<void> {
     try {
         await notion.pages.update({
             page_id: pageId,
@@ -152,7 +138,6 @@ export async function incrementViews(pageId: string, currentViews: number) {
                 },
             },
         });
-        console.log(`✅ Incremented views for ${pageId}: ${currentViews} -> ${currentViews + 1}`);
     } catch (error) {
         console.error("Failed to increment views:", error);
     }
