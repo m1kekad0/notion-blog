@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/notion";
 import { Eye } from "lucide-react";
+import TagLink from "@/components/TagLink";
 
 export const revalidate = 3600; // 1 hour
 
@@ -32,23 +33,21 @@ export default async function Home() {
 
       <div className="space-y-8">
         {posts.map((post) => (
-          <Link href={`/blog/${post.slug}`} key={post.id} className="block group">
-            <article className="border-b pb-8 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
-              <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
-                <time dateTime={post.date}>
-                  {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
-                </time>
-                <div className="flex items-center gap-1">
-                  <Eye size={14} />
-                  <span>{post.views} views</span>
-                </div>
-                {post.tags.map(tag => (
-                  <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs">
-                    {tag}
-                  </span>
-                ))}
+          <article key={post.id} className="border-b pb-8">
+            <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+              <time dateTime={post.date}>
+                {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
+              </time>
+              <div className="flex items-center gap-1">
+                <Eye size={14} />
+                <span>{post.views} views</span>
               </div>
+              {post.tags.map(tag => (
+                <TagLink key={tag} tag={tag} />
+              ))}
+            </div>
 
+            <Link href={`/blog/${post.slug}`} className="group block">
               <h2 className="text-2xl font-bold mb-3 group-hover:text-blue-600 transition-colors">
                 {post.title}
               </h2>
@@ -60,8 +59,8 @@ export default async function Home() {
               <div className="text-blue-500 text-sm font-medium group-hover:underline">
                 Read more →
               </div>
-            </article>
-          </Link>
+            </Link>
+          </article>
         ))}
       </div>
     </div>

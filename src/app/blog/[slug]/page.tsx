@@ -10,6 +10,7 @@ import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import type { Metadata } from "next";
+import TagLink from "@/components/TagLink";
 
 export const revalidate = 3600; // 1 hour
 
@@ -76,9 +77,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     </div>
                     <div className="flex gap-2">
                         {post.tags.map((tag: string) => (
-                            <span key={tag} className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                                {tag}
-                            </span>
+                            <TagLink key={tag} tag={tag} />
                         ))}
                     </div>
                 </div>
