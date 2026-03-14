@@ -46,3 +46,8 @@ next-env.d.ts
 # debug scripts
 debug-client.mjs
 test-connection.mjs
+
+# build and tool artifacts
+.open-next
+.playwright-mcp
+.playwright-mcd

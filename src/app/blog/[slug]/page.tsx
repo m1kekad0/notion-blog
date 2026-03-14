@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostContent, getPosts } from "@/lib/notion";
+import { getPostBySlug, getPostContent } from "@/lib/notion";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -9,18 +9,18 @@ import Comments from "@/components/Comments";
 import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye } from "lucide-react";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
 import TableOfContents from "@/components/TableOfContents";
 import { extractHeadings } from "@/lib/toc";
+import CodeBlock from "@/components/CodeBlock";
 
-export const revalidate = 3600; // 1 hour
+// 5-minute ISR: Notion S3 signed image URLs expire in 1 hour.
+// revalidate=300 (5 min) is well within that window, so images stay valid
+// while the page is cached. Cloudflare's edge CDN provides an additional
+// caching layer in front of the Worker.
+export const revalidate = 300;
 
-export async function generateStaticParams() {
-    const posts = await getPosts();
-    return posts.map((post) => ({ slug: post.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -63,7 +63,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-3xl xl:max-w-5xl">
-            <ViewTracker pageId={post.id} />
+            {/* ViewTracker: マウント時に閲覧数を KV にインクリメントし、最新カウントをヘッダーに反映 */}
 
             <div className="mb-8">
                 <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
@@ -80,10 +80,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                             <time dateTime={post.date}>
                                 {post.date ? new Date(post.date).toLocaleDateString("ja-JP") : ""}
                             </time>
-                            <div className="flex items-center gap-1">
-                                <Eye size={16} />
-                                <span>{post.views} views</span>
-                            </div>
+                            {/* KV から最新カウントを取得・表示し、同時にインクリメントする */}
+                            <ViewTracker pageId={post.id} initialViews={post.views} />
                             <div className="flex gap-2 flex-wrap">
                                 {post.tags.map((tag: string) => (
                                     <TagLink key={tag} tag={tag} />
@@ -104,6 +102,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
+                        pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
                         h2: ({ children }) => {
                             const text = String(children).replace(/\*+/g, "").trim();
                             const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");

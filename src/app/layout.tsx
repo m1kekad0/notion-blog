@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -42,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <body
         className={`${inter.className} antialiased`}
       >
@@ -57,7 +58,7 @@ export default function RootLayout({
               <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-3xl">
                 <div className="flex items-center gap-4">
                   <div className="font-bold text-lg hover:text-blue-500 transition-colors">
-                    <a href="/">引きこもりエンジニアの徒然ログ</a>
+                    <Link href="/">引きこもりエンジニアの徒然ログ</Link>
                   </div>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline-block leading-tight max-w-[300px]">
                     ブログの内容は事実に基づいて生成AIが出力した内容を掲載しており、一部表現が過剰なものもあります。ご理解ください🙏
