@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostContent, getPosts } from "@/lib/notion";
+import { getPostBySlug, getPostContent } from "@/lib/notion";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -20,10 +20,6 @@ import CodeBlock from "@/components/CodeBlock";
 // This supersedes revalidate.
 export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-    const posts = await getPosts();
-    return posts.map((post) => ({ slug: post.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
