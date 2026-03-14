@@ -14,6 +14,7 @@ import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
 import TableOfContents from "@/components/TableOfContents";
 import { extractHeadings } from "@/lib/toc";
+import CodeBlock from "@/components/CodeBlock";
 
 export const revalidate = 3600; // 1 hour
 
@@ -104,6 +105,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
+                        pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
                         h2: ({ children }) => {
                             const text = String(children).replace(/\*+/g, "").trim();
                             const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");
