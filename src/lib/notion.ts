@@ -33,22 +33,33 @@ export type Post = {
 export async function getPosts(): Promise<Post[]> {
     try {
         // Note: notion.databases.query is missing in v5.9.0 or not working with Data Sources.
-        // Using Search API as a workaround.
-        const response = await notion.search({
-            query: "",
-            filter: {
-                property: "object",
-                value: "page",
-            },
-            sort: {
-                direction: "descending",
-                timestamp: "last_edited_time",
-            },
-        });
+        // Using Search API as a workaround. Paginate through all results using has_more + start_cursor.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const allResults: any[] = [];
+        let cursor: string | undefined = undefined;
+
+        do {
+            const response = await notion.search({
+                query: "",
+                filter: {
+                    property: "object",
+                    value: "page",
+                },
+                sort: {
+                    direction: "descending",
+                    timestamp: "last_edited_time",
+                },
+                ...(cursor ? { start_cursor: cursor } : {}),
+            });
+            allResults.push(...response.results);
+            cursor = response.has_more && response.next_cursor ? response.next_cursor : undefined;
+        } while (cursor);
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const dbItems = response.results.filter((item: any) => {
-            const pid = item.parent.database_id;
+        const dbItems = allResults.filter((item: any) => {
+            // Support both database_id (standard) and data_source_id (Notion Data Source API change Feb 2026)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const pid = item.parent.database_id ?? (item.parent as any).data_source_id;
             const isDatabaseMatch = pid && pid.replaceAll("-", "") === databaseId!.replaceAll("-", "");
 
             const status = item.properties.status?.select?.name;
