@@ -16,9 +16,11 @@ import TableOfContents from "@/components/TableOfContents";
 import { extractHeadings } from "@/lib/toc";
 import CodeBlock from "@/components/CodeBlock";
 
-// force-dynamic: Notion-hosted S3 image URLs expire after 1 hour, so we must re-fetch on every request.
-// This supersedes revalidate.
-export const dynamic = 'force-dynamic';
+// 5-minute ISR: Notion S3 signed image URLs expire in 1 hour.
+// revalidate=300 (5 min) is well within that window, so images stay valid
+// while the page is cached. Cloudflare's edge CDN provides an additional
+// caching layer in front of the Worker.
+export const revalidate = 300;
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
