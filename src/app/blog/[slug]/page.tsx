@@ -9,7 +9,6 @@ import Comments from "@/components/Comments";
 import ViewTracker from "@/components/ViewTracker";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye } from "lucide-react";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
 import TableOfContents from "@/components/TableOfContents";
@@ -64,7 +63,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-3xl xl:max-w-5xl">
-            <ViewTracker pageId={post.id} />
+            {/* ViewTracker: マウント時に閲覧数を KV にインクリメントし、最新カウントをヘッダーに反映 */}
 
             <div className="mb-8">
                 <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
@@ -81,10 +80,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                             <time dateTime={post.date}>
                                 {post.date ? new Date(post.date).toLocaleDateString("ja-JP") : ""}
                             </time>
-                            <div className="flex items-center gap-1">
-                                <Eye size={16} />
-                                <span>{post.views} views</span>
-                            </div>
+                            {/* KV から最新カウントを取得・表示し、同時にインクリメントする */}
+                            <ViewTracker pageId={post.id} initialViews={post.views} />
                             <div className="flex gap-2 flex-wrap">
                                 {post.tags.map((tag: string) => (
                                     <TagLink key={tag} tag={tag} />
