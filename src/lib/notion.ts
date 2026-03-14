@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Client } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
 
@@ -28,9 +29,12 @@ export type Post = {
 };
 
 /**
- * Get all posts from the Notion database (via Search API workaround)
+ * Get all posts from the Notion database (via Search API workaround).
+ * Wrapped with React.cache() to deduplicate calls within a single request cycle.
+ * This prevents generateMetadata and the page component from each triggering
+ * a separate full Notion Search API round-trip on force-dynamic routes.
  */
-export async function getPosts(): Promise<Post[]> {
+export const getPosts = cache(async function getPosts(): Promise<Post[]> {
     try {
         // Note: notion.databases.query is missing in v5.9.0 or not working with Data Sources.
         // Using Search API as a workaround. Paginate through all results using has_more + start_cursor.
@@ -100,7 +104,7 @@ export async function getPosts(): Promise<Post[]> {
         console.error("Failed to fetch posts:", error);
         return [];
     }
-}
+});
 
 /**
  * Get a single post by slug
