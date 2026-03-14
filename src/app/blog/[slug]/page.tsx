@@ -16,7 +16,9 @@ import TableOfContents from "@/components/TableOfContents";
 import { extractHeadings } from "@/lib/toc";
 import CodeBlock from "@/components/CodeBlock";
 
-export const revalidate = 3600; // 1 hour
+// force-dynamic: Notion-hosted S3 image URLs expire after 1 hour, so we must re-fetch on every request.
+// This supersedes revalidate.
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
     const posts = await getPosts();
