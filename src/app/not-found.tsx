@@ -1,5 +1,11 @@
 import Link from 'next/link'
 
+/**
+ * 404 Not Found ページコンポーネント。
+ *
+ * 存在しない記事・ページへのアクセス時に Next.js が自動で表示する。
+ * ホームへ戻るリンクを提供する。
+ */
 export default function NotFound() {
     return (
         <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center min-h-[60vh] text-center">

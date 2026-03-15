@@ -1,5 +1,14 @@
 import type { Heading } from "@/components/TableOfContents";
 
+/**
+ * Markdown 文字列から見出し（h2, h3）を抽出する。
+ *
+ * 目次コンポーネント（TableOfContents）に渡すデータを生成するために使用する。
+ * `##` および `###` のみを対象とし、h1 はページタイトルのため除外する。
+ *
+ * @param markdown - 解析対象の Markdown 文字列
+ * @returns 見出しレベル・表示テキスト・アンカー ID の配列
+ */
 export function extractHeadings(markdown: string): Heading[] {
     const headings: Heading[] = [];
 
@@ -8,9 +17,9 @@ export function extractHeadings(markdown: string): Heading[] {
         if (!match) continue;
 
         const level = match[1].length;
-        // Strip bold/italic markers for display text
+        // 太字・斜体マーカー（*）を除去して表示用テキストを生成
         const text = match[2].replace(/\*+/g, "").trim();
-        // Generate a URL-safe ID (supports Japanese)
+        // URL セーフな ID を生成（日本語・英数字・ハイフンを許容）
         const id = text
             .toLowerCase()
             .replace(/\s+/g, "-")

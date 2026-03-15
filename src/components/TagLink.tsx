@@ -1,5 +1,13 @@
 import Link from "next/link";
 
+/**
+ * タグ名をリンクとして表示するコンポーネント。
+ *
+ * クリックするとタグ別記事一覧ページ（`/tags/[tag]`）へ遷移する。
+ * タグ名は URL エンコードして href に埋め込む。
+ *
+ * @param tag - 表示・リンク先に使用するタグ名
+ */
 export default function TagLink({ tag }: { tag: string }) {
     return (
         <Link

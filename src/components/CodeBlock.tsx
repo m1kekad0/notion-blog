@@ -3,10 +3,24 @@
 import { useRef, useState } from "react";
 import { Copy, Check } from "lucide-react";
 
+/**
+ * コードブロックをコピーボタン付きで表示するクライアントコンポーネント。
+ *
+ * `<pre>` 要素をラップし、ホバー時にコピーボタンを表示する。
+ * コピー完了後 2 秒間はチェックマークアイコンに切り替わる。
+ *
+ * @param children - `<pre>` 内に表示するコードコンテンツ（通常は `<code>` 要素）
+ */
 export default function CodeBlock({ children }: { children: React.ReactNode }) {
+    /** `<pre>` 要素への参照。テキスト内容をクリップボードにコピーするために使用する */
     const preRef = useRef<HTMLPreElement>(null);
+    /** コピー完了状態。`true` の間はチェックマークアイコンを表示する */
     const [copied, setCopied] = useState(false);
 
+    /**
+     * コードブロックのテキスト内容をクリップボードにコピーする。
+     * コピー後 2 秒でアイコンをコピーアイコンに戻す。
+     */
     const handleCopy = async () => {
         const text = preRef.current?.textContent ?? "";
         await navigator.clipboard.writeText(text);

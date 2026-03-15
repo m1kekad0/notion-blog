@@ -496,3 +496,27 @@ await incrementViews(pageId, currentViews);
 ```
 
 > **注意**: 競合状態（同時アクセス時のカウント消失）は個人ブログのスケールでは許容範囲とし、現時点では修正しない。正確なカウントが必要になった場合は Cloudflare D1/KV をカウンターのソース・オブ・トゥルースとして使用する構成に移行する。
+
+---
+
+### 11.6 TODO: `/blog/[slug]` への `generateStaticParams` 追加検討
+
+**背景**
+`app/blog/[slug]/page.tsx` には `generateStaticParams` が存在しない。Cloudflare Workers + OpenNext の構成では、`generateStaticParams` がない動的セグメントは **初回リクエスト時に必ず Notion API を呼び出す（コールドスタート）**。現在の `revalidate=300` 設定は "オンデマンド ISR" であり、純粋な SSG ではない。
+
+**判断基準**
+- 記事数が少なく初回アクセスのレイテンシを許容できる場合 → 現状維持
+- 初回アクセス体験を改善したい場合 → `generateStaticParams` を追加してビルド時プリレンダリングを行う（ただしビルド時間が記事数に比例して増加する）
+
+**TODO**: 記事数が増えてきた段階で初回アクセスレイテンシを計測し、必要に応じて対応する。
+
+---
+
+### 11.7 TODO: slug 変更時の Giscus コメントスレッド孤立
+
+**背景**
+`Comments.tsx` は `mapping="pathname"` を使用しており、GitHub Discussions のスレッドをページの URL パスで紐付けている。Notion 上で記事の `slug` プロパティを変更すると URL パスが変わり、**旧パスのコメントスレッドは孤立し、新パスでは空のコメント欄が表示される**。
+
+**運用上の注意**
+- 一度公開した記事の `slug` は変更しないことを原則とする
+- やむを得ず変更する場合は、GitHub Discussions 上で旧スレッドを手動で新 URL 相当のスレッドに移植するか、コメントが失われることを許容する

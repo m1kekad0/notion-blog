@@ -18,7 +18,6 @@ Notion を CMS（コンテンツ管理システム）として利用し、Notion
     *   ページネーションまたは無限スクロール
 *   **記事詳細表示:**
     *   Notion のブロック内容を忠実に再現（画像、引用、コードブロック等）
-    *   **Mermaid 記法によるダイアグラム表示対応**
     *   目次（TOC）の自動生成と表示
 *   **記事の分類・検索:**
     *   タグ別一覧表示
@@ -43,4 +42,3 @@ Notion を CMS（コンテンツ管理システム）として利用し、Notion
 *   **CMS:** Notion API
 *   **Deployment:** Vercel
 *   **Comment System:** Giscus (GitHub Discussions 連携)
-*   **Diagrams:** Mermaid.js (via react-mermaid etc.)
