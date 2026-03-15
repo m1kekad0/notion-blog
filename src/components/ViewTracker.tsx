@@ -22,10 +22,10 @@ export default function ViewTracker({
     useEffect(() => {
         fetch(`/api/views/${pageId}`, { method: "POST" })
             .then((res) => res.json())
-            .then((data) => {
+            .then((data: unknown) => {
                 // POST レスポンスに含まれる最新カウント（KV ベース）で表示を更新
-                if (typeof data.views === "number") {
-                    setViews(data.views);
+                if (data !== null && typeof data === "object" && "views" in data && typeof (data as { views: unknown }).views === "number") {
+                    setViews((data as { views: number }).views);
                 }
             })
             .catch(() => {

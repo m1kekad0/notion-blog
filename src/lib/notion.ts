@@ -192,3 +192,28 @@ export async function incrementViews(pageId: string, currentViews: number): Prom
         console.error("Failed to increment views:", error);
     }
 }
+
+/**
+ * 指定された記事の閲覧数を Notion 上に直接書き込む。
+ *
+ * KV → Notion のライトスルー時に使用する。
+ * `incrementViews` と異なり、指定した値をそのまま設定する。
+ * エラーが発生した場合はサイレントに失敗し、更新はベストエフォートとする。
+ *
+ * @param pageId - 更新対象の Notion ページ ID
+ * @param views - Notion に書き込む閲覧数
+ */
+export async function setViews(pageId: string, views: number): Promise<void> {
+    try {
+        await notion.pages.update({
+            page_id: pageId,
+            properties: {
+                views: {
+                    number: views,
+                },
+            },
+        });
+    } catch (error) {
+        console.error("Failed to set views:", error);
+    }
+}
