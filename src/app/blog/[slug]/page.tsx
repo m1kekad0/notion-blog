@@ -81,8 +81,6 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-3xl xl:max-w-5xl">
-            {/* ViewTracker: マウント時に閲覧数を KV にインクリメントし、最新カウントをヘッダーに反映 */}
-
             <div className="mb-8">
                 <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
                     ← Back to Home
