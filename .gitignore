@@ -49,5 +49,6 @@ test-connection.mjs
 
 # build and tool artifacts
 .open-next
+.wrangler
 .playwright-mcp
 .playwright-mcd

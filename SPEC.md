@@ -155,6 +155,12 @@ notion-blog/
 
 **注意事項**: `@notionhq/client` v5.9.0 では `databases.query` が機能しないため、Search API をワークアラウンドとして使用。
 
+> **運用ルール（Search API ワークアラウンド監視）**
+> Notion 公式 API の修正（`databases.query` の復旧）を定期的に確認すること。
+> 確認タイミング: `@notionhq/client` の新バージョンリリース時、または Notion API 変更通知受信時。
+> 修正が確認された場合は、Search API ワークアラウンドを `databases.query` に置き換える。
+> 参照: [Notion API Changelog](https://developers.notion.com/page/changelog)
+
 #### Notion データベース プロパティ定義
 
 | プロパティ名 | 型 | 説明 |
