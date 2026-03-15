@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/notion";
-import { Eye } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
@@ -79,10 +78,6 @@ export default async function TagPage({ params }: { params: Promise<{ tag: strin
                             <time dateTime={post.date}>
                                 {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
                             </time>
-                            <div className="flex items-center gap-1">
-                                <Eye size={14} />
-                                <span>{post.views} views</span>
-                            </div>
                             {post.tags.map((t) => (
                                 <TagLink key={t} tag={t} />
                             ))}
