@@ -5,14 +5,28 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import TagLink from "@/components/TagLink";
 
+/** ISR のキャッシュ有効期間（秒）。1 時間ごとに再生成する */
 export const revalidate = 3600;
 
+/**
+ * ビルド時に静的生成するタグページのパラメータを生成する。
+ *
+ * 全記事からタグを収集し、各タグの URL エンコード済みパラメータを返す。
+ *
+ * @returns `{ tag: string }` 形式のパラメータ配列
+ */
 export async function generateStaticParams() {
     const posts = await getPosts();
     const tags = new Set(posts.flatMap((post) => post.tags));
     return Array.from(tags).map((tag) => ({ tag: encodeURIComponent(tag) }));
 }
 
+/**
+ * タグ別記事一覧ページの動的メタデータを生成する。
+ *
+ * @param params - ルートパラメータ（URL エンコードされた `tag` を含む）
+ * @returns ページタイトル・説明・OGP を含むメタデータオブジェクト
+ */
 export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {
     const { tag } = await params;
     const decoded = decodeURIComponent(tag);
@@ -26,6 +40,14 @@ export async function generateMetadata({ params }: { params: Promise<{ tag: stri
     };
 }
 
+/**
+ * タグ別記事一覧ページコンポーネント。
+ *
+ * 指定されたタグを持つ記事のみをフィルタリングして表示する。
+ * 該当する記事が 0 件の場合は 404 ページを返す。
+ *
+ * @param params - ルートパラメータ（URL エンコードされた `tag` を含む）
+ */
 export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
     const { tag } = await params;
     const decoded = decodeURIComponent(tag);

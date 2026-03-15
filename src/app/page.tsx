@@ -3,10 +3,21 @@ import { getPosts } from "@/lib/notion";
 import { Eye } from "lucide-react";
 import TagLink from "@/components/TagLink";
 
-export const revalidate = 3600; // 1 hour
+/** ISR のキャッシュ有効期間（秒）。1 時間ごとに再生成する */
+export const revalidate = 3600;
 
+/** 1 ページあたりの表示件数 */
 const PAGE_SIZE = 10;
 
+/**
+ * ブログのホームページ（記事一覧）コンポーネント。
+ *
+ * ページネーション付きで全記事を一覧表示する。
+ * `?page=N` クエリパラメータでページを切り替える。
+ * 記事が 0 件の場合はエラーメッセージを表示する。
+ *
+ * @param searchParams - URL クエリパラメータ（`page` の取得に使用）
+ */
 export default async function Home({
   searchParams,
 }: {
@@ -29,6 +40,7 @@ export default async function Home({
   }
 
   const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
+  // currentPage が総ページ数を超えている場合は最終ページに補正する
   const safePage = Math.min(currentPage, totalPages);
   const posts = allPosts.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 

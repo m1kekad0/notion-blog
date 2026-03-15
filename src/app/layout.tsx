@@ -5,12 +5,20 @@ import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+/** Inter フォント（Latin サブセット）の設定 */
 const inter = Inter({ subsets: ["latin"] });
 
+/** サイト URL（環境変数未設定時はローカル開発用 URL にフォールバック） */
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://localhost:3000";
+/** サイト名 */
 const siteName = "引きこもりエンジニアの徒然ログ";
+/** サイト概要 */
 const siteDescription = "引きこもりエンジニアの日常・技術・雑記ブログ。Notion と Next.js で動いています。";
 
+/**
+ * サイト共通のメタデータ設定。
+ * OGP・Twitter Card・RSS フィードのリンクを含む。
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -37,6 +45,14 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * アプリケーション全体のルートレイアウトコンポーネント。
+ *
+ * テーマプロバイダー、ヘッダー、メインコンテンツ領域、フッターを提供する。
+ * すべてのページはこのレイアウトの `children` としてレンダリングされる。
+ *
+ * @param children - 各ページのコンテンツ
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

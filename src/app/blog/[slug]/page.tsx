@@ -15,13 +15,22 @@ import TableOfContents from "@/components/TableOfContents";
 import { extractHeadings } from "@/lib/toc";
 import CodeBlock from "@/components/CodeBlock";
 
-// 5-minute ISR: Notion S3 signed image URLs expire in 1 hour.
-// revalidate=300 (5 min) is well within that window, so images stay valid
-// while the page is cached. Cloudflare's edge CDN provides an additional
-// caching layer in front of the Worker.
+// ISR を 5 分に設定する理由:
+// Notion が S3 署名付き画像 URL を発行し、有効期限は約 1 時間。
+// revalidate=300（5 分）であれば有効期限内に収まり、キャッシュ中の画像 URL が
+// 期限切れにならない。Cloudflare の Edge CDN が Worker の手前でさらにキャッシュする。
 export const revalidate = 300;
 
 
+/**
+ * ブログ記事ページの動的メタデータを生成する。
+ *
+ * スラッグから記事を取得し、タイトル・説明・OGP・Twitter Card を設定する。
+ * 記事が見つからない場合は "Not Found" を返す。
+ *
+ * @param params - ルートパラメータ（`slug` を含む）
+ * @returns ページのメタデータオブジェクト
+ */
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     const post = await getPostBySlug(slug);
@@ -50,6 +59,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
 }
 
+/**
+ * ブログ記事詳細ページコンポーネント。
+ *
+ * スラッグから記事を取得し、Markdown をレンダリングして表示する。
+ * サイドバー目次（xl 以上）およびインライン目次（xl 未満）を表示する。
+ * 記事が見つからない場合は 404 ページを返す。
+ *
+ * @param params - ルートパラメータ（`slug` を含む）
+ */
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const post = await getPostBySlug(slug);
@@ -72,7 +90,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             </div>
 
             <div className="xl:flex xl:gap-12">
-                {/* Main content */}
+                {/* メインコンテンツ領域 */}
                 <div className="flex-1 min-w-0">
                     <header className="mb-8">
                         <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
@@ -90,7 +108,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                         </div>
                     </header>
 
-                    {/* TOC inline (non-xl screens) */}
+                    {/* インライン目次（xl 未満の画面幅で表示） */}
                     {headings.length > 0 && (
                         <div className="xl:hidden mb-8 p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
                             <TableOfContents headings={headings} />
@@ -102,19 +120,23 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
+                        // <pre> をコピーボタン付きコードブロックに置き換える
                         pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
                         h2: ({ children }) => {
+                            // 目次と一致するよう toc.ts と同じ ID 生成ロジックを適用する
                             const text = String(children).replace(/\*+/g, "").trim();
                             const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");
                             return <h2 id={id}>{children}</h2>;
                         },
                         h3: ({ children }) => {
+                            // 目次と一致するよう toc.ts と同じ ID 生成ロジックを適用する
                             const text = String(children).replace(/\*+/g, "").trim();
                             const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff-]/g, "").replace(/^-+|-+$/g, "");
                             return <h3 id={id}>{children}</h3>;
                         },
                         img: ({ src, alt }) => {
                             const imgSrc = typeof src === "string" ? src : "";
+                            // src が空の場合は描画しない
                             if (!imgSrc) return null;
                             return (
                                 <span className="block my-4">
@@ -131,6 +153,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                             );
                         },
                         a: ({ node, href, children, ...props }) => {
+                            // Notion のブックマークブロックは "bookmark" というテキストのリンクとして変換される
                             if (children === "bookmark" && href) {
                                 return (
                                     <a
@@ -169,7 +192,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     </div>
                 </div>
 
-                {/* TOC sidebar (xl screens) */}
+                {/* サイドバー目次（xl 以上の画面幅でのみ表示） */}
                 {headings.length > 0 && (
                     <aside className="hidden xl:block w-56 shrink-0">
                         <div className="sticky top-24 p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
