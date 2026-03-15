@@ -31,7 +31,6 @@
       "id": "261fae5c1c8a4d9e92741fa0a6422420"
     },
     {
-      // TODO: pnpm wrangler kv namespace create BLOG_VIEWS_KV を実行し id を差し替えること
       "binding": "BLOG_VIEWS_KV",
       "id": "12e2d3b2ec1240998bff067b4efc7b0b"
     }

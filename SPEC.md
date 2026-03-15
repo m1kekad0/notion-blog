@@ -153,13 +153,7 @@ notion-blog/
 | `getPostContent(pageId)` | `notion-to-md` でページ内容を Markdown 文字列に変換 |
 | `incrementViews(pageId, currentViews)` | Notion API でページの `views` プロパティを +1 更新 |
 
-**注意事項**: `@notionhq/client` v5.9.0 では `databases.query` が機能しないため、Search API をワークアラウンドとして使用。
-
-> **運用ルール（Search API ワークアラウンド監視）**
-> Notion 公式 API の修正（`databases.query` の復旧）を定期的に確認すること。
-> 確認タイミング: `@notionhq/client` の新バージョンリリース時、または Notion API 変更通知受信時。
-> 修正が確認された場合は、Search API ワークアラウンドを `databases.query` に置き換える。
-> 参照: [Notion API Changelog](https://developers.notion.com/page/changelog)
+**注意事項**: `@notionhq/client` v5.9.0 では `databases.query` が機能しないため、Search API をワークアラウンドとして使用。これは恒久的な設計として受け入れる。記事数増加による API コール増大への対応は `docs/backlog.md` を参照。
 
 #### Notion データベース プロパティ定義
 
