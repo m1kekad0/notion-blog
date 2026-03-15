@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/notion";
-import { Eye } from "lucide-react";
 import TagLink from "@/components/TagLink";
 
 /** ISR のキャッシュ有効期間（秒）。1 時間ごとに再生成する */
@@ -62,10 +61,6 @@ export default async function Home({
               <time dateTime={post.date}>
                 {post.date ? new Date(post.date).toLocaleDateString() : "No Date"}
               </time>
-              <div className="flex items-center gap-1">
-                <Eye size={14} />
-                <span>{post.views} views</span>
-              </div>
               {post.tags.map(tag => (
                 <TagLink key={tag} tag={tag} />
               ))}
