@@ -7,6 +7,17 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // 非機密の環境変数。デプロイのたびに上書きされるためここで管理する。
+  // 機密値（NOTION_API_KEY, NOTION_DATABASE_ID）は Secret として別途設定する:
+  //   pnpm wrangler secret put NOTION_API_KEY
+  //   pnpm wrangler secret put NOTION_DATABASE_ID
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://notion-blog.m1kekad0.workers.dev",
+    "NEXT_PUBLIC_GISCUS_REPO": "m1kekad0/notion-blog",
+    "NEXT_PUBLIC_GISCUS_REPO_ID": "R_kgDORSSE4Q",
+    "NEXT_PUBLIC_GISCUS_CATEGORY": "Announcements",
+    "NEXT_PUBLIC_GISCUS_CATEGORY_ID": "DIC_kwDORSSE4c4C2tYL"
+  },
   // ISR cache backend (Cloudflare KV).
   // Run the following command to create the namespace, then replace the id below:
   //   wrangler kv namespace create NEXT_INC_CACHE_KV
