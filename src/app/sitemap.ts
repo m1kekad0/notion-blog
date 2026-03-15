@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getPosts } from "@/lib/notion";
 
+/** ISR のキャッシュ有効期間（秒）。1 時間ごとに再生成する */
+export const revalidate = 3600;
+
 /** サイト URL（環境変数未設定時はローカル開発用 URL にフォールバック） */
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://localhost:3000";
 

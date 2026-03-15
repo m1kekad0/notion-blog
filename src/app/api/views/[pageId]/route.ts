@@ -4,20 +4,19 @@ import { NextResponse } from "next/server";
 
 /**
  * KV のキープレフィックス。
- * NEXT_INC_CACHE_KV は ISR キャッシュ用に "incremental-cache/" プレフィックスを使用するため、
- * "view:" プレフィックスと衝突しない。
+ * 閲覧数は BLOG_VIEWS_KV（ISR キャッシュ用の NEXT_INC_CACHE_KV とは別名前空間）に保存する。
  */
 const KV_PREFIX = "view:";
 
 /**
- * Cloudflare KV 名前空間を取得する。
+ * 閲覧数カウンター専用の Cloudflare KV 名前空間（BLOG_VIEWS_KV）を取得する。
  * ローカル開発環境（next dev）では Cloudflare Workers ランタイムが存在しないため null を返す。
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getKV(): Promise<any | null> {
     try {
         const ctx = await getCloudflareContext({ async: true });
-        return ctx.env.NEXT_INC_CACHE_KV ?? null;
+        return ctx.env.BLOG_VIEWS_KV ?? null;
     } catch {
         // ローカル開発環境では Cloudflare コンテキストが存在しないため正常
         return null;
